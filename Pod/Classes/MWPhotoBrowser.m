@@ -177,7 +177,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _nextButton = [[UIBarButtonItem alloc] initWithImage:nextButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
     if (self.displayActionButton) {
-        _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
+        _actionButton = [[UIBarButtonItem alloc] initWithTitle:@"DOWNLOAD" style:UIBarButtonItemStyleBordered
+                                                        target:self
+                                                        action:@selector(actionButtonPressed:)];
+        UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
+        NSDictionary *attributes = @{NSFontAttributeName: font};
+        [_actionButton setTitleTextAttributes:attributes forState:UIControlStateNormal];
     }
     
     // Update
