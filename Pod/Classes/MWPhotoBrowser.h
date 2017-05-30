@@ -50,6 +50,8 @@
 @property (nonatomic) BOOL enableSwipeToDismiss;
 @property (nonatomic) BOOL startOnGrid;
 @property (nonatomic) BOOL autoPlayOnAppear;
+@property (nonatomic, copy) NSString *titleLabelString;
+@property (nonatomic, copy) NSString *subtitleLabelString;
 @property (nonatomic) NSUInteger delayToHideElements;
 @property (nonatomic, readonly) NSUInteger currentIndex;
 
