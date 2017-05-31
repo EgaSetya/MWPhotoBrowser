@@ -9,7 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "MWPhotoProtocol.h"
 
+@protocol MWCaptionViewDelegate <NSObject>
+
+- (void)loveButtonDidClicked:(id<MWPhoto>)photo;
+- (void)downloadButtonDidClicked:(id<MWPhoto>)photo;
+
+@end
+
 @interface MWCaptionView : UIToolbar
+
+
+@property (nonatomic, weak) id<MWCaptionViewDelegate> captionDelegate;
 
 // Init
 - (id)initWithPhoto:(id<MWPhoto>)photo;

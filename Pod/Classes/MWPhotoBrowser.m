@@ -65,7 +65,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _currentPageIndex = 0;
     _previousPageIndex = NSUIntegerMax;
     _currentVideoIndex = NSUIntegerMax;
-    _displayActionButton = YES;
+    _displayActionButton = NO;
     _displayNavArrows = NO;
     _zoomPhotosToFill = YES;
     _performingLayout = NO; // Reset on view did appear
@@ -203,13 +203,19 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _previousButton = [[UIBarButtonItem alloc] initWithImage:previousButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
         _nextButton = [[UIBarButtonItem alloc] initWithImage:nextButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
-    if (self.displayActionButton) {
-        _actionButton = [[UIBarButtonItem alloc] initWithTitle:@"DOWNLOAD" style:UIBarButtonItemStyleBordered
-                                                        target:self
-                                                        action:@selector(actionButtonPressed:)];
-        UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
-        NSDictionary *attributes = @{NSFontAttributeName: font};
-        [_actionButton setTitleTextAttributes:attributes forState:UIControlStateNormal];
+    if (self.displayMoreButton) {
+        // moreButton
+        _moreButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"moreButton"] style:UIBarButtonItemStylePlain target:self action:@selector(moreButtonDidClicked:)];
+    }
+    
+    if (self.displaySkipButton) {
+        _skipButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_skipButton setImage:[UIImage imageNamed:@"skipJourney"] forState:UIControlStateNormal];
+        [_skipButton setImage:[UIImage imageNamed:@"skipJourney"] forState:UIControlStateHighlighted];
+        [_skipButton addTarget:self action:@selector(skipButtonDidTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [_skipButton sizeToFit];
+        _skipButton.frame = CGRectMake(self.view.bounds.size.width - 140, self.view.bounds.size.height - 100, 130, 42);
+        [self.view addSubview:_skipButton];
     }
     
     // Update
@@ -297,8 +303,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [items addObject:_actionButton];
     } else {
         // We're not showing the toolbar so try and show in top right
-        if (_actionButton)
+        if (_actionButton) {
             self.navigationItem.rightBarButtonItem = _actionButton;
+        } else if (_moreButton) {
+            self.navigationItem.rightBarButtonItem = _moreButton;
+        }
         [items addObject:fixedSpace];
     }
     
@@ -848,6 +857,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             
             // Add caption
             MWCaptionView *captionView = [self captionViewForPhotoAtIndex:index];
+            captionView.captionDelegate = self;
             if (captionView) {
                 captionView.frame = [self frameForCaptionView:captionView atIndex:index];
                 [_pagingScrollView addSubview:captionView];
@@ -1180,7 +1190,26 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self jumpToPageAtIndex:_currentPageIndex+1 animated:animated];
 }
 
+- (void)showSkipButtonAnimated:(BOOL)animated {
+    [UIView animateWithDuration:0.2 animations:^(void) {
+        _skipButton.alpha = 1.0;
+    } completion:^(BOOL finished) {}];
+}
+
+- (void)hideSkipButtonAnimated:(BOOL)animated {
+    [UIView animateWithDuration:0.2 animations:^(void) {
+        _skipButton.alpha = 0.0;
+    } completion:^(BOOL finished) {}];
+}
+
 #pragma mark - Interactions
+
+- (void)skipButtonDidTapped:(id)sender {
+    if ([self.delegate respondsToSelector:@selector(skipButtonClickedAtPhotoBrowser:)]) {
+        [self.delegate skipButtonClickedAtPhotoBrowser:self];
+    }
+    
+}
 
 - (void)selectedButtonTapped:(id)sender {
     UIButton *selectedButton = (UIButton *)sender;
@@ -1610,6 +1639,22 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 #pragma mark - Actions
 
+- (void)moreButtonDidClicked:(id)sender {
+    NSLog(@"moreButtonDidClicked :");
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction* closeAction = [UIAlertAction actionWithTitle:@"Tutup" style:UIAlertActionStyleCancel
+                                                          handler:^(UIAlertAction * action) {}];
+    UIAlertAction* reportAction = [UIAlertAction actionWithTitle:@"Laporkan" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:reportAction];
+    [alert addAction:closeAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 - (void)actionButtonPressed:(id)sender {
     
     // Only react when image has loaded
@@ -1696,6 +1741,21 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.progressHUD hide:YES];
     }
     self.navigationController.navigationBar.userInteractionEnabled = YES;
+}
+
+#pragma mark - MWCaptionViewDelegate
+- (void)loveButtonDidClicked:(id<MWPhoto>)photo {
+    MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
+    if (page) {
+        // If they have defined a delegate method then just message them
+        if ([self.delegate respondsToSelector:@selector(photoBrowser:loveButtonPressedForPhotoAtIndex:)]) {
+            [self.delegate photoBrowser:self loveButtonPressedForPhotoAtIndex:page.index];
+        }
+    }
+}
+
+- (void)downloadButtonDidClicked:(id<MWPhoto>)photo {
+    [self actionButtonPressed:photo];
 }
 
 @end

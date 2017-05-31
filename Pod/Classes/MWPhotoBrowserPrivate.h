@@ -34,7 +34,7 @@
 	// Navigation & controls
 	UIToolbar *_toolbar;
 	NSTimer *_controlVisibilityTimer;
-	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton, *_doneButton;
+	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton, *_doneButton, *_moreButton;
     MBProgressHUD *_progressHUD;
     
     // Grid
@@ -58,11 +58,14 @@
     NSUInteger _currentVideoIndex;
     UIActivityIndicatorView *_currentVideoLoadingIndicator;
     
+    UIButton *_skipButton;
+    
     // Misc
     BOOL _hasBelongedToViewController;
     BOOL _isVCBasedStatusBarAppearance;
     BOOL _statusBarShouldBeHidden;
     BOOL _displayActionButton;
+    BOOL _displayMoreButton;
     BOOL _leaveStatusBarAlone;
 	BOOL _performingLayout;
 	BOOL _rotating;

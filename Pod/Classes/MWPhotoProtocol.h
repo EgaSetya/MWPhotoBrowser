@@ -59,6 +59,10 @@
 
 // Video
 @property (nonatomic) BOOL isVideo;
+
+// Love Button
+@property (nonatomic) BOOL displayActionButtons;
+
 - (void)getVideoURL:(void (^)(NSURL *url))completion;
 
 // Return a caption string to be displayed over the image

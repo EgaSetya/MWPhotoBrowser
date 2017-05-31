@@ -35,6 +35,8 @@
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index;
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
 - (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser loveButtonPressedForPhotoAtIndex:(NSUInteger)index;
+- (void)skipButtonClickedAtPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 
 @end
 
@@ -44,7 +46,9 @@
 @property (nonatomic) BOOL zoomPhotosToFill;
 @property (nonatomic) BOOL displayNavArrows;
 @property (nonatomic) BOOL displayActionButton;
+@property (nonatomic) BOOL displayMoreButton;
 @property (nonatomic) BOOL displaySelectionButtons;
+@property (nonatomic) BOOL displaySkipButton;
 @property (nonatomic) BOOL alwaysShowControls;
 @property (nonatomic) BOOL enableGrid;
 @property (nonatomic) BOOL enableSwipeToDismiss;
@@ -73,5 +77,7 @@
 // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;
+- (void)showSkipButtonAnimated:(BOOL)animated;
+- (void)hideSkipButtonAnimated:(BOOL)animated;
 
 @end
