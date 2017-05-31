@@ -1646,9 +1646,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction* closeAction = [UIAlertAction actionWithTitle:@"Tutup" style:UIAlertActionStyleCancel
-                                                          handler:^(UIAlertAction * action) {}];
+                                                        handler:^(UIAlertAction * action) {}];
     UIAlertAction* reportAction = [UIAlertAction actionWithTitle:@"Laporkan" style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {}];
+                                                         handler:^(UIAlertAction * action) {
+                                                             [self reportButtonDidPressed:action];
+                                                         }];
     
     [alert addAction:reportAction];
     [alert addAction:closeAction];
@@ -1705,6 +1707,16 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         
     }
     
+}
+
+- (void)reportButtonDidPressed:(id)sender {
+    // If they have defined a delegate method then just message them
+    if ([self.delegate respondsToSelector:@selector(photoBrowser:reportButtonPressedForPhotoAtIndex:)]) {
+        
+        // Let delegate handle things
+        [self.delegate photoBrowser:self reportButtonPressedForPhotoAtIndex:_currentPageIndex];
+        
+    }
 }
 
 #pragma mark - Action Progress

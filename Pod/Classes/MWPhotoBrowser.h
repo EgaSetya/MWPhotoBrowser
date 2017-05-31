@@ -37,6 +37,7 @@
 - (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser;
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser loveButtonPressedForPhotoAtIndex:(NSUInteger)index;
 - (void)skipButtonClickedAtPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser reportButtonPressedForPhotoAtIndex:(NSUInteger)index;
 
 @end
 
