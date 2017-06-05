@@ -206,8 +206,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (self.displayMoreButton) {
         // moreButton
         _moreButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"moreButton"] style:UIBarButtonItemStylePlain target:self action:@selector(moreButtonDidClicked:)];
+    } else {
+        if (self.displayActionButton) {
+            _actionButton = [[UIBarButtonItem alloc] initWithTitle:@"DOWNLOAD" style:UIBarButtonItemStyleBordered target:self action:@selector(actionButtonPressed:)];
+            UIFont *font = [UIFont fontWithName:@"Calibre-Medium" size:14];
+            NSDictionary *attributes = @{NSFontAttributeName: font};
+            [_actionButton setTitleTextAttributes:attributes forState:UIControlStateNormal];
+        }
     }
-    
     if (self.displaySkipButton) {
         _skipButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_skipButton setImage:[UIImage imageNamed:@"skipJourney"] forState:UIControlStateNormal];
