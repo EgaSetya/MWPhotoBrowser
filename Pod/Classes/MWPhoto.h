@@ -21,6 +21,8 @@
 @property (nonatomic) BOOL emptyImage;
 @property (nonatomic) BOOL isVideo;
 @property (nonatomic) BOOL displayActionButtons;
+@property (nonatomic, assign) NSInteger totalLove;
+@property (nonatomic) BOOL isLoved;
 
 + (MWPhoto *)photoWithImage:(UIImage *)image;
 + (MWPhoto *)photoWithURL:(NSURL *)url;

@@ -40,4 +40,6 @@
 // the full width of the screen
 - (CGSize)sizeThatFits:(CGSize)size;
 
+- (void)updateLoveButtonWithTotalLove:(NSInteger)totalLove isLoved:(BOOL)isLoved;
+
 @end

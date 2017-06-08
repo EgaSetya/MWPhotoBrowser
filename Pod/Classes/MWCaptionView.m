@@ -19,7 +19,9 @@ static const CGFloat widhtLoveButton = 50;
     UILabel *_label;
     UIButton *_loveButton;
     UIButton *_downloadButton;
-    BOOL displayActionButtons;
+    BOOL _displayActionButtons;
+    NSInteger _totalLove;
+    BOOL _isLoved;
 }
 @end
 
@@ -38,12 +40,22 @@ static const CGFloat widhtLoveButton = 50;
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         if ([_photo respondsToSelector:@selector(displayActionButtons)]) {
             if ([_photo displayActionButtons]) {
-                displayActionButtons = YES;
+                _displayActionButtons = YES;
             }
         }
+        if ([_photo respondsToSelector:@selector(totalLove)]) {
+            _totalLove = [_photo totalLove];
+        }
+        if ([_photo respondsToSelector:@selector(isLoved)]) {
+            _isLoved = [_photo isLoved];
+        }
         [self setupCaption];
-        if (displayActionButtons) {
+        if (_displayActionButtons) {
             [self setupActionsButtons];
+        }
+        
+        if (_totalLove > 0) {
+            [self updateLoveButtonWithTotalLove:_totalLove isLoved:_isLoved];
         }
         
     }
@@ -65,7 +77,7 @@ static const CGFloat widhtLoveButton = 50;
     // add love button
     _loveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_loveButton setImage:[UIImage imageNamed:@"loveNormalSummary"] forState:UIControlStateNormal];
-    [_loveButton setTitle:@"30" forState:UIControlStateNormal];
+    [_loveButton setTitle:@"" forState:UIControlStateNormal];
     [_loveButton.titleLabel setFont:[UIFont fontWithName:@"Calibre-Medium" size:14]];
     [_loveButton setImage:[UIImage imageNamed:@"loveNormalSummary"] forState:UIControlStateHighlighted];
     [_loveButton addTarget:self action:@selector(loveButtonDidTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -92,7 +104,7 @@ static const CGFloat widhtLoveButton = 50;
 }
 
 - (void)setupCaption {
-    if (displayActionButtons) {
+    if (_displayActionButtons) {
         _label = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(labelPadding, 0,
                                                                           self.bounds.size.width - labelPadding*2 - widhtLoveButton - 40,
                                                                           self.bounds.size.height))];
@@ -114,6 +126,20 @@ static const CGFloat widhtLoveButton = 50;
         _label.text = [_photo caption] ? [_photo caption] : @" ";
     }
     [self addSubview:_label];
+}
+
+- (void)updateLoveButtonWithTotalLove:(NSInteger)totalLove isLoved:(BOOL)isLoved {
+    if (_loveButton) {
+        if (totalLove == 0) {
+            return;
+        }
+        [_loveButton setTitle:[NSString stringWithFormat:@"%ld", (long)totalLove] forState:UIControlStateNormal];
+        if (isLoved) {
+            [_loveButton setImage:[UIImage imageNamed:@"love_selected"] forState:UIControlStateNormal];
+        } else {
+            [_loveButton setImage:[UIImage imageNamed:@"loveNormalSummary"] forState:UIControlStateNormal];
+        }
+    }
 }
 
 - (void)loveButtonDidTapped:(id)sender {

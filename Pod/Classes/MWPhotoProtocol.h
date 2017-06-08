@@ -63,6 +63,10 @@
 // Love Button
 @property (nonatomic) BOOL displayActionButtons;
 
+@property (nonatomic, assign) NSInteger totalLove;
+
+@property (nonatomic) BOOL isLoved;
+
 - (void)getVideoURL:(void (^)(NSURL *url))completion;
 
 // Return a caption string to be displayed over the image
