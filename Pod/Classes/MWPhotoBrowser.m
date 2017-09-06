@@ -1543,6 +1543,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             }
         }
         
+        // skip button
+        _skipButton.alpha = alpha;
+        
         // Selected buttons
         for (MWZoomingScrollView *page in _visiblePages) {
             if (page.selectedButton) {
