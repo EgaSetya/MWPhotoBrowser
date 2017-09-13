@@ -800,10 +800,20 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
     if (page) {
         if ([photo underlyingImage]) {
-            // Successful load
+            
+            // show skip button
+            if (self.displaySkipButton) {
+                [self showSkipButtonAnimated:YES];
+            }
+            
             [page displayImage];
             [self loadAdjacentPhotosIfNecessary:photo];
         } else {
+            
+            // hide skip button
+            if (self.displaySkipButton) {
+                [self hideSkipButtonAnimated:YES];
+            }
             
             // Failed to load
             [page displayImageFailure];
