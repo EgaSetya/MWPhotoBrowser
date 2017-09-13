@@ -275,6 +275,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         _previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
         previousViewController.navigationItem.backBarButtonItem = newBackButton;
+        
+        UIImage *backButtonImage = [[UIImage imageNamed:@"back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:backButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed:)];
+        self.navigationItem.leftBarButtonItem = backButton;
     }
     
     // Toolbar items
@@ -1632,6 +1636,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 #pragma mark - Misc
+
+- (void)backButtonPressed:(id)sender {
+    if ([self.delegate respondsToSelector:@selector(backButtonClickedAtPhotoBrowser:)]) {
+        [self.delegate backButtonClickedAtPhotoBrowser:self];
+    }
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 - (void)doneButtonPressed:(id)sender {
     // Only if we're modal and there's a done button
