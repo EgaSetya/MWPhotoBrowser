@@ -161,25 +161,33 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     // TitleView
     if (self.titleLabelString.length > 0 && self.subtitleLabelString.length > 0) {
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(-10, 0, 0, 0)];
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.textColor = [UIColor whiteColor];
         titleLabel.textAlignment = NSTextAlignmentLeft;
         titleLabel.font = [UIFont boldSystemFontOfSize:14];
+        titleLabel.adjustsFontSizeToFitWidth = NO;
+        titleLabel.numberOfLines = 1;
         titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        titleLabel.clipsToBounds = YES;
         titleLabel.text = self.titleLabelString;
         [titleLabel sizeToFit];
         
-        UILabel *subTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(-10, titleLabel.frame.origin.y + titleLabel.frame.size.height, 0, 0)];
+        UILabel *subTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, titleLabel.frame.origin.y + titleLabel.frame.size.height, 0, 0)];
+        subTitleLabel.clipsToBounds = YES;
         subTitleLabel.backgroundColor = [UIColor clearColor];
         subTitleLabel.textColor = [UIColor whiteColor];
         subTitleLabel.textAlignment = NSTextAlignmentLeft;
+        subTitleLabel.adjustsFontSizeToFitWidth = NO;
+        subTitleLabel.numberOfLines = 1;
         subTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         subTitleLabel.font = [UIFont systemFontOfSize:12];
         subTitleLabel.text = self.subtitleLabelString;
         [subTitleLabel sizeToFit];
         
-        UIView *twoLineTitleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 30)];
+        CGFloat viewWidth = self.displayActionButton ? self.view.frame.size.width - 60 : self.view.frame.size.width;
+        UIView *twoLineTitleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, 30)];
+        twoLineTitleView.clipsToBounds = YES;
         [twoLineTitleView addSubview:titleLabel];
         [twoLineTitleView addSubview:subTitleLabel];
         
