@@ -145,7 +145,12 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (!_enableGrid) _startOnGrid = NO;
     
     // View
-    self.view.backgroundColor = [UIColor blackColor];
+    if (self.colorHexString == nil) {
+        self.view.backgroundColor = [UIColor blackColor];
+    } else {
+        self.view.backgroundColor = [UIColor whiteColor];
+    }
+    
     self.view.clipsToBounds = YES;
     
     // Setup paging scrolling view
@@ -156,41 +161,89 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _pagingScrollView.delegate = self;
     _pagingScrollView.showsHorizontalScrollIndicator = NO;
     _pagingScrollView.showsVerticalScrollIndicator = NO;
-    _pagingScrollView.backgroundColor = [UIColor blackColor];
+    if (self.colorHexString == nil) {
+        _pagingScrollView.backgroundColor = [UIColor blackColor];
+    } else {
+        _pagingScrollView.backgroundColor = [UIColor whiteColor];
+    }
+    
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
     [self.view addSubview:_pagingScrollView];
     
     // TitleView
-    if (self.titleLabelString.length > 0 && self.subtitleLabelString.length > 0) {
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-        titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.textColor = [UIColor whiteColor];
-        titleLabel.textAlignment = NSTextAlignmentLeft;
-        titleLabel.font = [UIFont boldSystemFontOfSize:14];
-        titleLabel.adjustsFontSizeToFitWidth = NO;
-        titleLabel.numberOfLines = 1;
-        titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        titleLabel.clipsToBounds = YES;
-        titleLabel.text = self.titleLabelString;
-        [titleLabel sizeToFit];
+    if (self.photoBrowserType == PhotoBrowserSummary) {
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, -2, 0, 0)];
+        self.titleLabel.backgroundColor = [UIColor clearColor];
+        self.titleLabel.textColor = [UIColor whiteColor];
+        self.titleLabel.textAlignment = NSTextAlignmentLeft;
+        self.titleLabel.font = [UIFont fontWithName:@"SourceSansPro-SemiBold" size:14];
+        self.titleLabel.adjustsFontSizeToFitWidth = NO;
+        self.titleLabel.numberOfLines = 1;
+        self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        self.titleLabel.clipsToBounds = YES;
+        self.titleLabel.text = self.titleLabelString;
+        [self.titleLabel sizeToFit];
         
-        UILabel *subTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, titleLabel.frame.origin.y + titleLabel.frame.size.height, 0, 0)];
-        subTitleLabel.clipsToBounds = YES;
-        subTitleLabel.backgroundColor = [UIColor clearColor];
-        subTitleLabel.textColor = [UIColor whiteColor];
-        subTitleLabel.textAlignment = NSTextAlignmentLeft;
-        subTitleLabel.adjustsFontSizeToFitWidth = NO;
-        subTitleLabel.numberOfLines = 1;
-        subTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        subTitleLabel.font = [UIFont systemFontOfSize:12];
-        subTitleLabel.text = self.subtitleLabelString;
-        [subTitleLabel sizeToFit];
+        self.subTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 15, 0, 0)];
+        self.subTitleLabel.clipsToBounds = YES;
+        self.subTitleLabel.backgroundColor = [UIColor clearColor];
+        self.subTitleLabel.textColor = [UIColor whiteColor];
+        self.subTitleLabel.textAlignment = NSTextAlignmentLeft;
+        self.subTitleLabel.adjustsFontSizeToFitWidth = NO;
+        self.subTitleLabel.numberOfLines = 1;
+        self.subTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        self.subTitleLabel.font = [UIFont fontWithName:@"SourceSansPro-Regular" size:12];
+        self.subTitleLabel.text = self.subtitleLabelString;
+        [self.subTitleLabel sizeToFit];
         
         CGFloat viewWidth = self.displayActionButton ? self.view.frame.size.width - 60 : self.view.frame.size.width;
         UIView *twoLineTitleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, 30)];
         twoLineTitleView.clipsToBounds = YES;
-        [twoLineTitleView addSubview:titleLabel];
-        [twoLineTitleView addSubview:subTitleLabel];
+        [twoLineTitleView addSubview:self.titleLabel];
+        [twoLineTitleView addSubview:self.subTitleLabel];
+        
+        self.navigationItem.titleView = twoLineTitleView;
+    } else {
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, -2, 0, 0)];
+        self.titleLabel.backgroundColor = [UIColor clearColor];
+        self.titleLabel.textColor = [UIColor whiteColor];
+        self.titleLabel.textAlignment = NSTextAlignmentCenter;
+        self.titleLabel.font = [UIFont fontWithName:@"SourceSansPro-SemiBold" size:15];
+        self.titleLabel.adjustsFontSizeToFitWidth = NO;
+        self.titleLabel.numberOfLines = 1;
+        self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        self.titleLabel.clipsToBounds = YES;
+        self.titleLabel.text = self.titleLabelString;
+        [self.titleLabel sizeToFit];
+        
+        self.subTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 18, 0, 0)];
+        self.subTitleLabel.clipsToBounds = YES;
+        self.subTitleLabel.backgroundColor = [UIColor clearColor];
+        self.subTitleLabel.textColor = [UIColor whiteColor];
+        self.subTitleLabel.textAlignment = NSTextAlignmentCenter;
+        self.subTitleLabel.adjustsFontSizeToFitWidth = NO;
+        self.subTitleLabel.numberOfLines = 1;
+        self.subTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        self.subTitleLabel.font = [UIFont fontWithName:@"SourceSansPro-Regular" size:11];
+        self.subTitleLabel.text = @"1 dari 5";
+        [self.subTitleLabel sizeToFit];
+        
+        UIView *twoLineTitleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, MAX(self.subTitleLabel.frame.size.width, self.titleLabel.frame.size.width), 30)];
+        twoLineTitleView.clipsToBounds = YES;
+        [twoLineTitleView addSubview:self.titleLabel];
+        [twoLineTitleView addSubview:self.subTitleLabel];
+        
+        float widthDiff = self.subTitleLabel.frame.size.width - self.titleLabel.frame.size.width;
+        
+        if (widthDiff > 0) {
+            CGRect frame = self.titleLabel.frame;
+            frame.origin.x = widthDiff / 2;
+            self.titleLabel.frame = CGRectIntegral(frame);
+        }else{
+            CGRect frame = self.subTitleLabel.frame;
+            frame.origin.x = fabsf(widthDiff) / 2;
+            self.subTitleLabel.frame = CGRectIntegral(frame);
+        }
         
         self.navigationItem.titleView = twoLineTitleView;
     }
@@ -514,6 +567,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     } else {
         UIColor *color = [UIColor pxColorWithHexValue:self.colorHexString];
         navBar.barTintColor = color;
+        navBar.translucent = NO;
         [navBar setBackgroundImage:[MWPhotoBrowser imageFromColor:color] forBarMetrics:UIBarMetricsDefault];
         [navBar setBackgroundImage:[MWPhotoBrowser imageFromColor:color] forBarMetrics:UIBarMetricsCompact];
     }
@@ -1085,9 +1139,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation {
     CGFloat height = 44;
+    CGFloat safeAreaInsetBottom = 0;
+    if (@available(iOS 11, *)) {
+        safeAreaInsetBottom = self.view.safeAreaInsets.bottom;
+    }
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
         UIInterfaceOrientationIsLandscape(orientation)) height = 32;
-    return CGRectIntegral(CGRectMake(0, self.view.bounds.size.height - height, self.view.bounds.size.width, height));
+    
+    return CGRectIntegral(CGRectMake(0, self.view.bounds.size.height - height - safeAreaInsetBottom, self.view.bounds.size.width, height));
 }
     
 - (CGRect)frameForCaptionView:(MWCaptionView *)captionView atIndex:(NSUInteger)index {
@@ -1176,7 +1235,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     } else if (numberOfPhotos > 1) {
         if ([_delegate respondsToSelector:@selector(photoBrowser:titleForPhotoAtIndex:)]) {
-            self.title = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
+            self.subTitleLabel.text = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
         } else {
             self.title = [NSString stringWithFormat:@"%lu %@ %lu", (unsigned long)(_currentPageIndex+1), NSLocalizedString(@"of", @"Used in the context: 'Showing 1 of 3 items'"), (unsigned long)numberOfPhotos];
         }

@@ -25,8 +25,7 @@
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
     
-    @optional
-    
+@optional
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
 - (NSString *)photoBrowser:(MWPhotoBrowser *)photoBrowser titleForPhotoAtIndex:(NSUInteger)index;
@@ -40,11 +39,18 @@
 - (void)backButtonClickedAtPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser reportButtonPressedForPhotoAtIndex:(NSUInteger)index;
     
-    @end
+@end
+
+typedef NS_ENUM(NSInteger, PhotoBrowserType) {
+    PhotoBrowserSummary = 0,
+    PhotoBrowserSquadNotes
+};
 
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
     
     @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
+    @property (nonatomic, strong) UILabel *titleLabel;
+    @property (nonatomic, strong) UILabel *subTitleLabel;
     @property (nonatomic) BOOL zoomPhotosToFill;
     @property (nonatomic) BOOL displayNavArrows;
     @property (nonatomic) BOOL displayActionButton;
@@ -61,6 +67,7 @@
     @property (nonatomic, copy) NSString *colorHexString;
     @property (nonatomic) NSUInteger delayToHideElements;
     @property (nonatomic, readonly) NSUInteger currentIndex;
+    @property (nonatomic, assign) PhotoBrowserType photoBrowserType;
     
     // Customise image selection icons as they are the only icons with a colour tint
     // Icon should be located in the app's main bundle

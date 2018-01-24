@@ -11,7 +11,7 @@
 #import "MWPhoto.h"
 
 static const CGFloat labelPadding = 10;
-static const CGFloat widhtLoveButton = 50;
+static const CGFloat widhtLoveButton = 60;
 
 // Private
 @interface MWCaptionView () {
@@ -68,10 +68,13 @@ static const CGFloat widhtLoveButton = 50;
     _downloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_downloadButton setImage:[UIImage imageNamed:@"downloadSummary"] forState:UIControlStateNormal];
     [_downloadButton setImage:[UIImage imageNamed:@"downloadSummary"] forState:UIControlStateHighlighted];
+    [_downloadButton setTitle:@"Download" forState:UIControlStateNormal];
+    [[_downloadButton titleLabel] setFont:[UIFont fontWithName:@"SourceSansPro-SemiBold" size:16]];
     [_downloadButton addTarget:self action:@selector(downloadButtonDidTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_downloadButton setTitleEdgeInsets:UIEdgeInsetsMake(0.0, 4.0, 0.0, 0.0)];
     [_downloadButton sizeToFit];
     _downloadButton.frame = CGRectMake(0, self.bounds.size.height/2 - 20,
-                                       25,
+                                       100,
                                        30);
     
     // add love button
@@ -82,7 +85,7 @@ static const CGFloat widhtLoveButton = 50;
     [_loveButton setImage:[UIImage imageNamed:@"loveNormalSummary"] forState:UIControlStateHighlighted];
     [_loveButton addTarget:self action:@selector(loveButtonDidTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_loveButton sizeToFit];
-    _loveButton.titleEdgeInsets = UIEdgeInsetsMake(0, 3, 0, 0);
+    _loveButton.titleEdgeInsets = UIEdgeInsetsMake(0, 4, 0, 0);
     _loveButton.frame = CGRectMake(0, self.bounds.size.height/2 - 20,
                                    widhtLoveButton,
                                    40);
