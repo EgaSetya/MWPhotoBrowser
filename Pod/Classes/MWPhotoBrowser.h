@@ -21,12 +21,12 @@
 @class MWPhotoBrowser;
 
 @protocol MWPhotoBrowserDelegate <NSObject>
-
+    
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index;
-
-@optional
-
+    
+    @optional
+    
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index;
 - (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index;
 - (NSString *)photoBrowser:(MWPhotoBrowser *)photoBrowser titleForPhotoAtIndex:(NSUInteger)index;
@@ -39,47 +39,49 @@
 - (void)skipButtonClickedAtPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 - (void)backButtonClickedAtPhotoBrowser:(MWPhotoBrowser *)photoBrowser;
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser reportButtonPressedForPhotoAtIndex:(NSUInteger)index;
-
-@end
+    
+    @end
 
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
-
-@property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
-@property (nonatomic) BOOL zoomPhotosToFill;
-@property (nonatomic) BOOL displayNavArrows;
-@property (nonatomic) BOOL displayActionButton;
-@property (nonatomic) BOOL displayMoreButton;
-@property (nonatomic) BOOL displaySelectionButtons;
-@property (nonatomic) BOOL displaySkipButton;
-@property (nonatomic) BOOL alwaysShowControls;
-@property (nonatomic) BOOL enableGrid;
-@property (nonatomic) BOOL enableSwipeToDismiss;
-@property (nonatomic) BOOL startOnGrid;
-@property (nonatomic) BOOL autoPlayOnAppear;
-@property (nonatomic, copy) NSString *titleLabelString;
-@property (nonatomic, copy) NSString *subtitleLabelString;
-@property (nonatomic) NSUInteger delayToHideElements;
-@property (nonatomic, readonly) NSUInteger currentIndex;
-
-// Customise image selection icons as they are the only icons with a colour tint
-// Icon should be located in the app's main bundle
-@property (nonatomic, strong) NSString *customImageSelectedIconName;
-@property (nonatomic, strong) NSString *customImageSelectedSmallIconName;
-
-// Init
+    
+    @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
+    @property (nonatomic) BOOL zoomPhotosToFill;
+    @property (nonatomic) BOOL displayNavArrows;
+    @property (nonatomic) BOOL displayActionButton;
+    @property (nonatomic) BOOL displayMoreButton;
+    @property (nonatomic) BOOL displaySelectionButtons;
+    @property (nonatomic) BOOL displaySkipButton;
+    @property (nonatomic) BOOL alwaysShowControls;
+    @property (nonatomic) BOOL enableGrid;
+    @property (nonatomic) BOOL enableSwipeToDismiss;
+    @property (nonatomic) BOOL startOnGrid;
+    @property (nonatomic) BOOL autoPlayOnAppear;
+    @property (nonatomic, copy) NSString *titleLabelString;
+    @property (nonatomic, copy) NSString *subtitleLabelString;
+    @property (nonatomic, copy) NSString *colorHexString;
+    @property (nonatomic) NSUInteger delayToHideElements;
+    @property (nonatomic, readonly) NSUInteger currentIndex;
+    
+    // Customise image selection icons as they are the only icons with a colour tint
+    // Icon should be located in the app's main bundle
+    @property (nonatomic, strong) NSString *customImageSelectedIconName;
+    @property (nonatomic, strong) NSString *customImageSelectedSmallIconName;
+    
+    // Init
 - (id)initWithPhotos:(NSArray *)photosArray;
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;
-
-// Reloads the photo browser and refetches data
+    
+    // Reloads the photo browser and refetches data
 - (void)reloadData;
-
-// Set page that photo browser starts on
+    
+    // Set page that photo browser starts on
 - (void)setCurrentPhotoIndex:(NSUInteger)index;
-
-// Navigation
+    
+    // Navigation
 - (void)showNextPhotoAnimated:(BOOL)animated;
 - (void)showPreviousPhotoAnimated:(BOOL)animated;
 - (void)showSkipButtonAnimated:(BOOL)animated;
 - (void)hideSkipButtonAnimated:(BOOL)animated;
+    
+    @end
 
-@end
