@@ -82,12 +82,12 @@ static const CGFloat widhtDownloadButton = 100;
     _loveButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_loveButton setImage:[UIImage imageNamed:@"loveNormalSummary"] forState:UIControlStateNormal];
     [_loveButton setTitle:@"" forState:UIControlStateNormal];
-    [_loveButton.titleLabel setFont:[UIFont fontWithName:@"Calibre-Medium" size:14]];
+    [_loveButton.titleLabel setFont:[UIFont fontWithName:@"SourceSansPro-SemiBold" size:16]];
     [_loveButton setImage:[UIImage imageNamed:@"loveNormalSummary"] forState:UIControlStateHighlighted];
     [_loveButton addTarget:self action:@selector(loveButtonDidTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_loveButton sizeToFit];
-    _loveButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
-    _loveButton.frame = CGRectMake(0, 5,
+    _loveButton.titleEdgeInsets = UIEdgeInsetsMake(0, 4.0, 0, 0);
+    _loveButton.frame = CGRectMake(0, 0,
                                    widhtLoveButton,
                                    self.bounds.size.height);
     
