@@ -12,6 +12,7 @@
 
 static const CGFloat labelPadding = 10;
 static const CGFloat widhtLoveButton = 60;
+static const CGFloat widhtDownloadButton = 100;
 
 // Private
 @interface MWCaptionView () {
@@ -73,9 +74,9 @@ static const CGFloat widhtLoveButton = 60;
     [_downloadButton addTarget:self action:@selector(downloadButtonDidTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_downloadButton setTitleEdgeInsets:UIEdgeInsetsMake(0.0, 4.0, 0.0, 0.0)];
     [_downloadButton sizeToFit];
-    _downloadButton.frame = CGRectMake(0, self.bounds.size.height/2 - 20,
-                                       100,
-                                       30);
+    _downloadButton.frame = CGRectMake(0, 0,
+                                       widhtDownloadButton,
+                                       self.bounds.size.height);
     
     // add love button
     _loveButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -85,10 +86,10 @@ static const CGFloat widhtLoveButton = 60;
     [_loveButton setImage:[UIImage imageNamed:@"loveNormalSummary"] forState:UIControlStateHighlighted];
     [_loveButton addTarget:self action:@selector(loveButtonDidTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_loveButton sizeToFit];
-    _loveButton.titleEdgeInsets = UIEdgeInsetsMake(0, 4, 0, 0);
-    _loveButton.frame = CGRectMake(0, self.bounds.size.height/2 - 20,
+    _loveButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+    _loveButton.frame = CGRectMake(0, 5,
                                    widhtLoveButton,
-                                   40);
+                                   self.bounds.size.height);
     
     UIBarButtonItem *flexible = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem* loveBarButtonItem =[[UIBarButtonItem alloc]initWithCustomView:_loveButton];
@@ -103,13 +104,14 @@ static const CGFloat widhtLoveButton = 60;
                                                 options:NSStringDrawingUsesLineFragmentOrigin
                                              attributes:@{NSFontAttributeName:_label.font}
                                                 context:nil].size;
-    return CGSizeMake(size.width, textSize.height + labelPadding * 2);
+    CGFloat height = textSize.height + labelPadding * 2;
+    return CGSizeMake(size.width, height < 50 ? 50 : height);
 }
 
 - (void)setupCaption {
     if (_displayActionButtons) {
         _label = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(labelPadding, 0,
-                                                                          self.bounds.size.width - labelPadding*2 - widhtLoveButton - 40,
+                                                                          self.bounds.size.width - labelPadding*2 - widhtLoveButton - widhtDownloadButton,
                                                                           self.bounds.size.height))];
     } else {
         _label = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(labelPadding, 0,
@@ -121,10 +123,9 @@ static const CGFloat widhtLoveButton = 60;
     _label.backgroundColor = [UIColor clearColor];
     _label.textAlignment = NSTextAlignmentLeft;
     _label.lineBreakMode = NSLineBreakByWordWrapping;
-    
     _label.numberOfLines = 0;
     _label.textColor = [UIColor whiteColor];
-    _label.font = [UIFont fontWithName:@"Calibre-Medium" size:14];
+    _label.font = [UIFont fontWithName:@"SourceSansPro-SemiBold" size:14];
     if ([_photo respondsToSelector:@selector(caption)]) {
         _label.text = [_photo caption] ? [_photo caption] : @" ";
     }

@@ -15,6 +15,8 @@
 #import "UIColor+PXExtensions.h"
 
 #define PADDING                  10
+#define TOOLBAR_FIXED_SPACE_TAG  19
+#define TOOLBAR_FLEXIBLE_SPACE_TAG  20
 
 static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
@@ -249,7 +251,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
     // Toolbar
-    _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:orientation]];
     _toolbar.tintColor = [UIColor whiteColor];
     _toolbar.barTintColor = nil;
     [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
@@ -346,8 +349,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Toolbar items
     BOOL hasItems = NO;
     UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    fixedSpace.tag = TOOLBAR_FIXED_SPACE_TAG;
     fixedSpace.width = 32; // To balance action button
     UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    flexSpace.tag = TOOLBAR_FLEXIBLE_SPACE_TAG;
     NSMutableArray *items = [[NSMutableArray alloc] init];
     
     // Left button - Grid
@@ -387,7 +392,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [_toolbar setItems:items];
     BOOL hideToolbar = YES;
     for (UIBarButtonItem* item in _toolbar.items) {
-        if (item != fixedSpace && item != flexSpace) {
+        if (item.tag != TOOLBAR_FIXED_SPACE_TAG && item.tag != TOOLBAR_FLEXIBLE_SPACE_TAG) {
             hideToolbar = NO;
             break;
         }
@@ -618,7 +623,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _performingLayout = YES;
     
     // Toolbar
-    _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    _toolbar.frame = [self frameForToolbarAtOrientation:orientation];
     
     // Remember index
     NSUInteger indexPriorToLayout = _currentPageIndex;
@@ -1139,14 +1145,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation {
     CGFloat height = 44;
-    CGFloat safeAreaInsetBottom = 0;
-    if (@available(iOS 11, *)) {
-        safeAreaInsetBottom = self.view.safeAreaInsets.bottom;
-    }
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
         UIInterfaceOrientationIsLandscape(orientation)) height = 32;
-    
-    return CGRectIntegral(CGRectMake(0, self.view.bounds.size.height - height - safeAreaInsetBottom, self.view.bounds.size.width, height));
+    CGFloat y = self.view.bounds.size.height - height;
+    if (@available(iOS 11.0, *)) {
+        y -= self.view.safeAreaInsets.bottom;
+    }
+    return CGRectIntegral(CGRectMake(0, y, self.view.bounds.size.width, height));
 }
     
 - (CGRect)frameForCaptionView:(MWCaptionView *)captionView atIndex:(NSUInteger)index {
@@ -1596,7 +1601,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if ([self areControlsHidden] && !hidden && animated) {
         
         // Toolbar
-        _toolbar.frame = CGRectOffset([self frameForToolbarAtOrientation:self.interfaceOrientation], 0, animatonOffset);
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+        _toolbar.frame = CGRectOffset([self frameForToolbarAtOrientation:orientation], 0, animatonOffset);
         
         // Captions
         for (MWZoomingScrollView *page in _visiblePages) {
@@ -1618,6 +1624,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.navigationController.navigationBar setAlpha:alpha];
         
         // Toolbar
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
         _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
         if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
         _toolbar.alpha = alpha;
