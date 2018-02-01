@@ -21,37 +21,37 @@
 static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 @implementation MWPhotoBrowser
-    
+
 #pragma mark - Init
-    
+
 - (id)init {
     if ((self = [super init])) {
         [self _initialisation];
     }
     return self;
 }
-    
+
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate {
     if ((self = [self init])) {
         _delegate = delegate;
     }
     return self;
 }
-    
+
 - (id)initWithPhotos:(NSArray *)photosArray {
     if ((self = [self init])) {
         _fixedPhotosArray = photosArray;
     }
     return self;
 }
-    
+
 - (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
         [self _initialisation];
     }
     return self;
 }
-    
+
 - (void)_initialisation {
     
     // Defaults
@@ -93,7 +93,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                                                object:nil];
     
 }
-    
+
 - (void)dealloc {
     [self clearCurrentVideo];
     _pagingScrollView.delegate = nil;
@@ -101,7 +101,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self releaseAllUnderlyingPhotos:NO];
     [[SDImageCache sharedImageCache] clearMemory]; // clear memory
 }
-    
+
 - (void)releaseAllUnderlyingPhotos:(BOOL)preserveCurrent {
     // Create a copy in case this array is modified while we are looping through
     // Release photos
@@ -122,7 +122,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
 }
-    
+
 - (void)didReceiveMemoryWarning {
     
     // Release any cached data, images, etc that aren't in use.
@@ -133,10 +133,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [super didReceiveMemoryWarning];
     
 }
-    
+
 #pragma mark - View Loading
-    
-    // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     
     // Validate grid settings
@@ -227,7 +227,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         self.subTitleLabel.numberOfLines = 1;
         self.subTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         self.subTitleLabel.font = [UIFont fontWithName:@"SourceSansPro-Regular" size:11];
-        self.subTitleLabel.text = @"1 dari 5";
+        if ([_delegate respondsToSelector:@selector(photoBrowser:titleForPhotoAtIndex:)]) {
+            self.subTitleLabel.text = [_delegate photoBrowser:self titleForPhotoAtIndex:_currentPageIndex];
+        }
         [self.subTitleLabel sizeToFit];
         
         UIView *twoLineTitleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, MAX(self.subTitleLabel.frame.size.width, self.titleLabel.frame.size.width), 30)];
@@ -303,7 +305,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [super viewDidLoad];
     
 }
-    
+
 - (void)performLayout {
     
     // Setup
@@ -412,8 +414,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _performingLayout = NO;
     
 }
-    
-    // Release any retained subviews of the main view.
+
+// Release any retained subviews of the main view.
 - (void)viewDidUnload {
     _currentPageIndex = 0;
     _pagingScrollView = nil;
@@ -425,7 +427,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _progressHUD = nil;
     [super viewDidUnload];
 }
-    
+
 - (BOOL)presentingViewControllerPrefersStatusBarHidden {
     UIViewController *presenting = self.presentingViewController;
     if (presenting) {
@@ -444,9 +446,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         return NO;
     }
 }
-    
+
 #pragma mark - Appearance
-    
+
 - (void)viewWillAppear:(BOOL)animated {
     
     // Super
@@ -492,7 +494,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self.view setNeedsLayout];
     
 }
-    
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     _viewIsActive = YES;
@@ -510,7 +512,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _viewHasAppearedInitially = YES;
     
 }
-    
+
 - (void)viewWillDisappear:(BOOL)animated {
     
     // Detect if rotation occurs while we're presenting a modal
@@ -544,19 +546,19 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [super viewWillDisappear:animated];
     
 }
-    
+
 - (void)willMoveToParentViewController:(UIViewController *)parent {
     if (parent && _hasBelongedToViewController) {
         [NSException raise:@"MWPhotoBrowser Instance Reuse" format:@"MWPhotoBrowser instances cannot be reused."];
     }
 }
-    
+
 - (void)didMoveToParentViewController:(UIViewController *)parent {
     if (!parent) _hasBelongedToViewController = YES;
 }
-    
+
 #pragma mark - Nav Bar Appearance
-    
+
 - (void)setNavBarAppearance:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     UINavigationBar *navBar = self.navigationController.navigationBar;
@@ -579,7 +581,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     
     
 }
-    
+
 - (void)storePreviousNavBarAppearance {
     _didSavePreviousStateOfNavBar = YES;
     _previousNavBarBarTintColor = self.navigationController.navigationBar.barTintColor;
@@ -590,7 +592,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _previousNavigationBarBackgroundImageDefault = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsDefault];
     _previousNavigationBarBackgroundImageLandscapePhone = [self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsLandscapePhone];
 }
-    
+
 - (void)restorePreviousNavBarAppearance:(BOOL)animated {
     if (_didSavePreviousStateOfNavBar) {
         [self.navigationController setNavigationBarHidden:_previousNavBarHidden animated:animated];
@@ -609,14 +611,14 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
 }
-    
+
 #pragma mark - Layout
-    
+
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     [self layoutVisiblePages];
 }
-    
+
 - (void)layoutVisiblePages {
     
     // Flag
@@ -676,17 +678,17 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _performingLayout = NO;
     
 }
-    
+
 #pragma mark - Rotation
-    
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return YES;
 }
-    
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskAll;
 }
-    
+
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     
     // Remember page index before rotation
@@ -700,7 +702,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
 }
-    
+
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     
     // Perform layout
@@ -713,7 +715,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self layoutVisiblePages];
     
 }
-    
+
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     _rotating = NO;
     // Ensure nav bar isn't re-displayed
@@ -722,13 +724,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         self.navigationController.navigationBar.alpha = 0;
     }
 }
-    
+
 #pragma mark - Data
-    
+
 - (NSUInteger)currentIndex {
     return _currentPageIndex;
 }
-    
+
 - (void)reloadData {
     
     // Reset
@@ -761,7 +763,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
 }
-    
+
 - (NSUInteger)numberOfPhotos {
     if (_photoCount == NSNotFound) {
         if ([_delegate respondsToSelector:@selector(numberOfPhotosInPhotoBrowser:)]) {
@@ -773,7 +775,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (_photoCount == NSNotFound) _photoCount = 0;
     return _photoCount;
 }
-    
+
 - (id<MWPhoto>)photoAtIndex:(NSUInteger)index {
     id <MWPhoto> photo = nil;
     if (index < _photos.count) {
@@ -790,7 +792,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return photo;
 }
-    
+
 - (id<MWPhoto>)thumbPhotoAtIndex:(NSUInteger)index {
     id <MWPhoto> photo = nil;
     if (index < _thumbPhotos.count) {
@@ -805,7 +807,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return photo;
 }
-    
+
 - (MWCaptionView *)captionViewForPhotoAtIndex:(NSUInteger)index {
     MWCaptionView *captionView = nil;
     if ([_delegate respondsToSelector:@selector(photoBrowser:captionViewForPhotoAtIndex:)]) {
@@ -819,7 +821,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     captionView.alpha = [self areControlsHidden] ? 0 : 1; // Initial alpha
     return captionView;
 }
-    
+
 - (BOOL)photoIsSelectedAtIndex:(NSUInteger)index {
     BOOL value = NO;
     if (_displaySelectionButtons) {
@@ -829,7 +831,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return value;
 }
-    
+
 - (void)setPhotoSelected:(BOOL)selected atIndex:(NSUInteger)index {
     if (_displaySelectionButtons) {
         if ([self.delegate respondsToSelector:@selector(photoBrowser:photoAtIndex:selectedChanged:)]) {
@@ -837,7 +839,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
 }
-    
+
 - (UIImage *)imageForPhoto:(id<MWPhoto>)photo {
     if (photo) {
         // Get image or obtain in background
@@ -849,7 +851,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return nil;
 }
-    
+
 - (void)loadAdjacentPhotosIfNecessary:(id<MWPhoto>)photo {
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
     if (page) {
@@ -875,9 +877,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
 }
-    
+
 #pragma mark - MWPhoto Loading Notification
-    
+
 - (void)handleMWPhotoLoadingDidEndNotification:(NSNotification *)notification {
     id <MWPhoto> photo = [notification object];
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
@@ -905,9 +907,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self updateNavigation];
     }
 }
-    
+
 #pragma mark - Paging
-    
+
 - (void)tilePages {
     
     // Calculate which pages should be visible
@@ -937,7 +939,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     [_visiblePages minusSet:_recycledPages];
     while (_recycledPages.count > 2) // Only keep 2 recycled pages
-    [_recycledPages removeObject:[_recycledPages anyObject]];
+        [_recycledPages removeObject:[_recycledPages anyObject]];
     
     // Add missing pages
     for (NSUInteger index = (NSUInteger)iFirstIndex; index <= (NSUInteger)iLastIndex; index++) {
@@ -999,7 +1001,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
 }
-    
+
 - (void)updateVisiblePageStates {
     NSSet *copy = [_visiblePages copy];
     for (MWZoomingScrollView *page in copy) {
@@ -1009,13 +1011,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         
     }
 }
-    
+
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index {
     for (MWZoomingScrollView *page in _visiblePages)
-    if (page.index == index) return YES;
+        if (page.index == index) return YES;
     return NO;
 }
-    
+
 - (MWZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index {
     MWZoomingScrollView *thePage = nil;
     for (MWZoomingScrollView *page in _visiblePages) {
@@ -1025,7 +1027,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return thePage;
 }
-    
+
 - (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhoto>)photo {
     MWZoomingScrollView *thePage = nil;
     for (MWZoomingScrollView *page in _visiblePages) {
@@ -1035,13 +1037,13 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return thePage;
 }
-    
+
 - (void)configurePage:(MWZoomingScrollView *)page forIndex:(NSUInteger)index {
     page.frame = [self frameForPageAtIndex:index];
     page.index = index;
     page.photo = [self photoAtIndex:index];
 }
-    
+
 - (MWZoomingScrollView *)dequeueRecycledPage {
     MWZoomingScrollView *page = [_recycledPages anyObject];
     if (page) {
@@ -1049,8 +1051,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return page;
 }
-    
-    // Handle page changes
+
+// Handle page changes
 - (void)didStartViewingPageAtIndex:(NSUInteger)index {
     
     // Handle 0 photos
@@ -1101,7 +1103,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Notify delegate
     if (index != _previousPageIndex) {
         if ([_delegate respondsToSelector:@selector(photoBrowser:didDisplayPhotoAtIndex:)])
-        [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
+            [_delegate photoBrowser:self didDisplayPhotoAtIndex:index];
         _previousPageIndex = index;
     }
     
@@ -1109,16 +1111,16 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self updateNavigation];
     
 }
-    
+
 #pragma mark - Frame Calculations
-    
+
 - (CGRect)frameForPagingScrollView {
     CGRect frame = self.view.bounds;// [[UIScreen mainScreen] bounds];
     frame.origin.x -= PADDING;
     frame.size.width += (2 * PADDING);
     return CGRectIntegral(frame);
 }
-    
+
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
     // We have to use our paging scroll view's bounds, not frame, to calculate the page placement. When the device is in
     // landscape orientation, the frame will still be in portrait because the pagingScrollView is the root view controller's
@@ -1130,19 +1132,19 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     pageFrame.origin.x = (bounds.size.width * index) + PADDING;
     return CGRectIntegral(pageFrame);
 }
-    
+
 - (CGSize)contentSizeForPagingScrollView {
     // We have to use the paging scroll view's bounds to calculate the contentSize, for the same reason outlined above.
     CGRect bounds = _pagingScrollView.bounds;
     return CGSizeMake(bounds.size.width * [self numberOfPhotos], bounds.size.height);
 }
-    
+
 - (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index {
     CGFloat pageWidth = _pagingScrollView.bounds.size.width;
     CGFloat newOffset = index * pageWidth;
     return CGPointMake(newOffset, 0);
 }
-    
+
 - (CGRect)frameForToolbarAtOrientation:(UIInterfaceOrientation)orientation {
     CGFloat height = 44;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
@@ -1153,7 +1155,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return CGRectIntegral(CGRectMake(0, y, self.view.bounds.size.width, height));
 }
-    
+
 - (CGRect)frameForCaptionView:(MWCaptionView *)captionView atIndex:(NSUInteger)index {
     CGRect pageFrame = [self frameForPageAtIndex:index];
     CGSize captionSize = [captionView sizeThatFits:CGSizeMake(pageFrame.size.width, 0)];
@@ -1163,7 +1165,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                                      captionSize.height);
     return CGRectIntegral(captionFrame);
 }
-    
+
 - (CGRect)frameForSelectedButton:(UIButton *)selectedButton atIndex:(NSUInteger)index {
     CGRect pageFrame = [self frameForPageAtIndex:index];
     CGFloat padding = 20;
@@ -1178,7 +1180,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                                             selectedButton.frame.size.height);
     return CGRectIntegral(selectedButtonFrame);
 }
-    
+
 - (CGRect)frameForPlayButton:(UIButton *)playButton atIndex:(NSUInteger)index {
     CGRect pageFrame = [self frameForPageAtIndex:index];
     return CGRectMake(floorf(CGRectGetMidX(pageFrame) - playButton.frame.size.width / 2),
@@ -1186,9 +1188,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
                       playButton.frame.size.width,
                       playButton.frame.size.height);
 }
-    
+
 #pragma mark - UIScrollView Delegate
-    
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     // Checks
@@ -1209,19 +1211,19 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
 }
-    
+
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     // Hide controls when dragging begins
     [self setControlsHidden:YES animated:YES permanent:NO];
 }
-    
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     // Update nav when page changes
     [self updateNavigation];
 }
-    
+
 #pragma mark - Navigation
-    
+
 - (void)updateNavigation {
     
     // Title
@@ -1263,7 +1265,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
 }
-    
+
 - (void)jumpToPageAtIndex:(NSUInteger)index animated:(BOOL)animated {
     
     // Change page
@@ -1277,43 +1279,43 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self hideControlsAfterDelay];
     
 }
-    
+
 - (void)gotoPreviousPage {
     [self showPreviousPhotoAnimated:NO];
 }
 - (void)gotoNextPage {
     [self showNextPhotoAnimated:NO];
 }
-    
+
 - (void)showPreviousPhotoAnimated:(BOOL)animated {
     [self jumpToPageAtIndex:_currentPageIndex-1 animated:animated];
 }
-    
+
 - (void)showNextPhotoAnimated:(BOOL)animated {
     [self jumpToPageAtIndex:_currentPageIndex+1 animated:animated];
 }
-    
+
 - (void)showSkipButtonAnimated:(BOOL)animated {
     [UIView animateWithDuration:0.2 animations:^(void) {
         _skipButton.alpha = 1.0;
     } completion:^(BOOL finished) {}];
 }
-    
+
 - (void)hideSkipButtonAnimated:(BOOL)animated {
     [UIView animateWithDuration:0.2 animations:^(void) {
         _skipButton.alpha = 0.0;
     } completion:^(BOOL finished) {}];
 }
-    
+
 #pragma mark - Interactions
-    
+
 - (void)skipButtonDidTapped:(id)sender {
     if ([self.delegate respondsToSelector:@selector(skipButtonClickedAtPhotoBrowser:)]) {
         [self.delegate skipButtonClickedAtPhotoBrowser:self];
     }
     
 }
-    
+
 - (void)selectedButtonTapped:(id)sender {
     UIButton *selectedButton = (UIButton *)sender;
     selectedButton.selected = !selectedButton.selected;
@@ -1328,7 +1330,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self setPhotoSelected:selectedButton.selected atIndex:index];
     }
 }
-    
+
 - (void)playButtonTapped:(id)sender {
     // Ignore if we're already playing a video
     if (_currentVideoIndex != NSUIntegerMax) {
@@ -1341,7 +1343,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
 }
-    
+
 - (NSUInteger)indexForPlayButton:(UIView *)playButton {
     NSUInteger index = NSUIntegerMax;
     for (MWZoomingScrollView *page in _visiblePages) {
@@ -1352,9 +1354,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return index;
 }
-    
+
 #pragma mark - Video
-    
+
 - (void)playVideoAtIndex:(NSUInteger)index {
     id photo = [self photoAtIndex:index];
     if ([photo respondsToSelector:@selector(getVideoURL:)]) {
@@ -1384,7 +1386,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         
     }
 }
-    
+
 - (void)_playVideo:(NSURL *)videoURL atPhotoIndex:(NSUInteger)index {
     
     // Setup player
@@ -1408,7 +1410,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self presentViewController:_currentVideoPlayerViewController animated:YES completion:nil];
     
 }
-    
+
 - (void)videoFinishedCallback:(NSNotification*)notification {
     
     // Remove observer
@@ -1431,7 +1433,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
 }
-    
+
 - (void)clearCurrentVideo {
     [_currentVideoPlayerViewController.moviePlayer stop];
     [_currentVideoLoadingIndicator removeFromSuperview];
@@ -1440,7 +1442,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [[self pageDisplayedAtIndex:_currentVideoIndex] playButton].hidden = NO;
     _currentVideoIndex = NSUIntegerMax;
 }
-    
+
 - (void)setVideoLoadingIndicatorVisible:(BOOL)visible atPageIndex:(NSUInteger)pageIndex {
     if (_currentVideoLoadingIndicator && !visible) {
         [_currentVideoLoadingIndicator removeFromSuperview];
@@ -1455,20 +1457,20 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [[self pageDisplayedAtIndex:pageIndex] playButton].hidden = YES;
     }
 }
-    
+
 - (void)positionVideoLoadingIndicator {
     if (_currentVideoLoadingIndicator && _currentVideoIndex != NSUIntegerMax) {
         CGRect frame = [self frameForPageAtIndex:_currentVideoIndex];
         _currentVideoLoadingIndicator.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
     }
 }
-    
+
 #pragma mark - Grid
-    
+
 - (void)showGridAnimated {
     [self showGrid:YES];
 }
-    
+
 - (void)showGrid:(BOOL)animated {
     
     if (_gridController) return;
@@ -1519,7 +1521,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }];
     
 }
-    
+
 - (void)hideGrid {
     
     if (!_gridController) return;
@@ -1557,16 +1559,16 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }];
     
 }
-    
+
 #pragma mark - Control Hiding / Showing
-    
-    // If permanent then we don't set timers to hide again
-    // Fades all controls on iOS 5 & 6, and iOS 7 controls slide and fade
+
+// If permanent then we don't set timers to hide again
+// Fades all controls on iOS 5 & 6, and iOS 7 controls slide and fade
 - (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated permanent:(BOOL)permanent {
     
     // Force visible
     if (![self numberOfPhotos] || _gridController || _alwaysShowControls)
-    hidden = NO;
+        hidden = NO;
     
     // Cancel any timers
     [self cancelControlHiding];
@@ -1663,7 +1665,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (!permanent) [self hideControlsAfterDelay];
     
 }
-    
+
 - (BOOL)prefersStatusBarHidden {
     if (!_leaveStatusBarAlone) {
         return _statusBarShouldBeHidden;
@@ -1671,15 +1673,15 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         return [self presentingViewControllerPrefersStatusBarHidden];
     }
 }
-    
+
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
-    
+
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
     return UIStatusBarAnimationSlide;
 }
-    
+
 - (void)cancelControlHiding {
     // If a timer exists then cancel and release
     if (_controlVisibilityTimer) {
@@ -1687,22 +1689,22 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _controlVisibilityTimer = nil;
     }
 }
-    
-    // Enable/disable control visiblity timer
+
+// Enable/disable control visiblity timer
 - (void)hideControlsAfterDelay {
     if (![self areControlsHidden]) {
         [self cancelControlHiding];
         _controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:self.delayToHideElements target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
     }
 }
-    
+
 - (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
 - (void)hideControls { [self setControlsHidden:YES animated:YES permanent:NO]; }
 - (void)showControls { [self setControlsHidden:NO animated:YES permanent:NO]; }
 - (void)toggleControls { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
-    
+
 #pragma mark - Properties
-    
+
 - (void)setCurrentPhotoIndex:(NSUInteger)index {
     // Validate
     NSUInteger photoCount = [self numberOfPhotos];
@@ -1710,25 +1712,25 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         index = 0;
     } else {
         if (index >= photoCount)
-        index = [self numberOfPhotos]-1;
+            index = [self numberOfPhotos]-1;
     }
     _currentPageIndex = index;
     if ([self isViewLoaded]) {
         [self jumpToPageAtIndex:index animated:NO];
         if (!_viewIsActive)
-        [self tilePages]; // Force tiling if view is not visible
+            [self tilePages]; // Force tiling if view is not visible
     }
 }
-    
+
 #pragma mark - Misc
-    
+
 - (void)backButtonPressed:(id)sender {
     if ([self.delegate respondsToSelector:@selector(backButtonClickedAtPhotoBrowser:)]) {
         [self.delegate backButtonClickedAtPhotoBrowser:self];
     }
     [self.navigationController popViewControllerAnimated:YES];
 }
-    
+
 - (void)doneButtonPressed:(id)sender {
     // Only if we're modal and there's a done button
     if (_doneButton) {
@@ -1751,9 +1753,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
 }
-    
+
 #pragma mark - Actions
-    
+
 - (void)moreButtonDidClicked:(id)sender {
     NSLog(@"moreButtonDidClicked :");
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil
@@ -1771,7 +1773,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [alert addAction:closeAction];
     [self presentViewController:alert animated:YES completion:nil];
 }
-    
+
 - (void)actionButtonPressed:(id)sender {
     
     // Only react when image has loaded
@@ -1823,7 +1825,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     
 }
-    
+
 - (void)reportButtonDidPressed:(id)sender {
     // If they have defined a delegate method then just message them
     if ([self.delegate respondsToSelector:@selector(photoBrowser:reportButtonPressedForPhotoAtIndex:)]) {
@@ -1833,9 +1835,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         
     }
 }
-    
+
 #pragma mark - Action Progress
-    
+
 - (MBProgressHUD *)progressHUD {
     if (!_progressHUD) {
         _progressHUD = [[MBProgressHUD alloc] initWithView:self.view];
@@ -1845,19 +1847,19 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     return _progressHUD;
 }
-    
+
 - (void)showProgressHUDWithMessage:(NSString *)message {
     self.progressHUD.labelText = message;
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
     [self.progressHUD show:YES];
     self.navigationController.navigationBar.userInteractionEnabled = NO;
 }
-    
+
 - (void)hideProgressHUD:(BOOL)animated {
     [self.progressHUD hide:animated];
     self.navigationController.navigationBar.userInteractionEnabled = YES;
 }
-    
+
 - (void)showProgressHUDCompleteMessage:(NSString *)message {
     if (message) {
         if (self.progressHUD.isHidden) [self.progressHUD show:YES];
@@ -1869,7 +1871,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
     self.navigationController.navigationBar.userInteractionEnabled = YES;
 }
-    
+
 #pragma mark - MWCaptionViewDelegate
 - (void)loveButtonDidClicked:(id<MWPhoto>)photo {
     MWZoomingScrollView *page = [self pageDisplayingPhoto:photo];
@@ -1880,11 +1882,11 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
 }
-    
+
 - (void)downloadButtonDidClicked:(id<MWPhoto>)photo {
     [self actionButtonPressed:photo];
 }
-    
+
 #pragma mark - Extension
 + (UIImage *)imageFromColor:(UIColor *)color {
     CGRect rect = CGRectMake(0, 0, 1, 1);
@@ -1896,6 +1898,5 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     UIGraphicsEndImageContext();
     return image;
 }
-    
-@end
 
+@end
