@@ -211,7 +211,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         self.titleLabel.textColor = [UIColor whiteColor];
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.font = [UIFont fontWithName:@"SourceSansPro-SemiBold" size:15];
-        self.titleLabel.adjustsFontSizeToFitWidth = NO;
         self.titleLabel.numberOfLines = 1;
         self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         self.titleLabel.clipsToBounds = YES;
@@ -223,7 +222,6 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         self.subTitleLabel.backgroundColor = [UIColor clearColor];
         self.subTitleLabel.textColor = [UIColor whiteColor];
         self.subTitleLabel.textAlignment = NSTextAlignmentCenter;
-        self.subTitleLabel.adjustsFontSizeToFitWidth = NO;
         self.subTitleLabel.numberOfLines = 1;
         self.subTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         self.subTitleLabel.font = [UIFont fontWithName:@"SourceSansPro-Regular" size:11];
@@ -245,10 +243,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             self.titleLabel.frame = CGRectIntegral(frame);
         }else{
             CGRect frame = self.subTitleLabel.frame;
-            frame.origin.x = fabsf(widthDiff) / 2;
+            frame.origin.x = fabs(widthDiff) / 2;
+            frame.size.width = frame.size.width + 20;
             self.subTitleLabel.frame = CGRectIntegral(frame);
         }
-        
         self.navigationItem.titleView = twoLineTitleView;
     }
     
