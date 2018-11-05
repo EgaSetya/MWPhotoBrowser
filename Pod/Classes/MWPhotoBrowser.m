@@ -243,10 +243,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             self.titleLabel.frame = CGRectIntegral(frame);
         }else{
             CGRect frame = self.subTitleLabel.frame;
-            frame.origin.x = fabs(widthDiff) / 2;
-            frame.size.width = frame.size.width + 20;
+            frame.origin.x = fabsf(widthDiff) / 2;
             self.subTitleLabel.frame = CGRectIntegral(frame);
         }
+        
         self.navigationItem.titleView = twoLineTitleView;
     }
     
