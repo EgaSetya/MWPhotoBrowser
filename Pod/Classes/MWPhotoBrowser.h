@@ -64,6 +64,7 @@ typedef NS_ENUM(NSInteger, PhotoBrowserType) {
     @property (nonatomic) BOOL autoPlayOnAppear;
     @property (nonatomic, copy) NSString *titleLabelString;
     @property (nonatomic, copy) NSString *subtitleLabelString;
+    @property (nonatomic, copy) NSString *skipButtonAssetNameString;    
     @property (nonatomic, copy) NSString *colorHexString;
     @property (nonatomic) NSUInteger delayToHideElements;
     @property (nonatomic, readonly) NSUInteger currentIndex;
