@@ -280,9 +280,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
     if (self.displaySkipButton) {
-        NSString *assetName = @"skipJourney"
+        NSString *assetName = @"skipJourney";
         if (self.skipButtonAssetNameString != nil) {
-            assetName = self.skipButtonAssetNameString
+            assetName = self.skipButtonAssetNameString;
         }
         _skipButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_skipButton setImage:[UIImage imageNamed:assetName] forState:UIControlStateNormal];
